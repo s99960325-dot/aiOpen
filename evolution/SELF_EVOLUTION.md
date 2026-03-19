@@ -34,16 +34,21 @@
 - ClawHub 技能市场（clawhub install/sync）
 
 ## 已掌握
-- 浏览器自动化（browser tool）
-- GitHub HTTPS + 代理
-- 技能系统架构
-- 定时任务（cron）
-- 记忆系统（MEMORY.md + memory/）
-- 进化体系（lessons/patterns/evals/prompts）
+- 浏览器自动化（搜索/抓取/操作）
+- GitHub 集成（HTTPS + 代理）
+- 定时任务（cron/心跳）
+- 记忆系统（长期/短期/进化）
+- 逆向资源库（14个高星项目）
 
 ## 待优化
 - 搜索速度（浏览器比 API 慢）
 - 内存管理（8GB 偏紧）
+
+## 下次心跳汇报
+- 本次学习：OpenClaw架构 + 技能系统 + 逆向资源
+- 配置更新：进化体系 + AGENTS.md 能力清单
+- 能力提升：搜索 + 代码管理 + 知识积累
+- 待改进：逆向工具安装 + 实战经验 + 协议分析
 - 回复更简洁，不超300字
 - 不用 markdown 格式
 - 先结论再原因
