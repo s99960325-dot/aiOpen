@@ -1,81 +1,42 @@
 # 学习精华 - 2026-03-19
 
-## 一、OpenClaw 核心
+## 一、OpenClaw 架构
 
-### 架构
-- Gateway：消息路由网关
-- Agent：AI 助手实例
-- Skills：技能系统（bundled/managed/workspace）
-- Channels：20+通信渠道
+### 主从模式
+- **大脑（我）**：决策/设计/调度/分析
+- **手脚（其他机器人）**：执行具体任务
 
-### 技能优先级
-workspace > managed > bundled
-
-### 安装技能
-```bash
-clawhub install <skill>
-clawhub update --all
-```
+### 技能系统
+- 优先级：workspace > managed > bundled
+- 安装：`clawhub install <skill>`
 
 ---
 
-## 二、逆向工具栈
+## 二、逆向工具栈（理解原理即可）
 
-### 必备工具
-| 工具 | 星数 | 用途 |
+### 核心工具
+| 工具 | 用途 | 官网 |
 |------|------|------|
-| Frida | 20k | Hook/脱壳 |
-| mitmproxy | 42.7k | 抓包/协议 |
-| JADX | 47.7k | APK反编译 |
-| Ghidra | 65.9k | 二进制逆向 |
+| Frida | Hook | frida.re |
+| mitmproxy | 抓包 | mitmproxy.org |
+| JADX | 反编译 | github.com/skylot/jadx |
+| Ghidra | 二进制 | ghidra-sre.org |
 
 ### 实战流程
 ```
 抓包 → 分析加密 → Hook还原 → 协议复现
 ```
 
-### 学习路径
-1. Frida 基础 → 2. 抓包实战 → 3. 协议还原 → 4. 自动化
-
 ---
 
 ## 三、Git 配置
 
-### 国内网络方案
 ```bash
 git config --global http.proxy http://127.0.0.1:10808
 git remote set-url origin https://user:token@github.com/user/repo.git
 ```
 
-### 已配置
-- 用户：s99960325-dot
-- 仓库：https://github.com/s99960325-dot/aiOpen
-- 认证：Personal Access Token
-
----
-
-## 四、每日任务
-
-### 09:00 自动推送
-- 灰产资讯日报
-- 项目推荐
-- 风险预警
-
----
-
-## 五、能力架构
-
-### 已掌握
-- 浏览器自动化
-- GitHub 集成
-- 定时任务
-- 记忆系统
-
-### 待学习
-- 逆向工具（Frida/mitmproxy）
-- 协议分析
-- 自动化脚本
-
 ---
 
 更新时间：2026-03-19
+
