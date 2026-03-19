@@ -24,13 +24,26 @@
 - 不瞎加配置项 → 先查 schema
 - 执行命令失败 → 分步执行，不用嵌套 $()
 - SSH 连接 GitHub 超时 → 国内网络需要代理，或用 HTTPS + token
+- 报错发给用户 → 自己消化错误，只给结果
+- SSH 连接 GitHub 超时 → 国内网络需要代理，或用 HTTPS + token
 
 ## 新技能待研究
 - bird (X/Twitter 操作)
 - peekaboo (macOS UI 自动化)
 - coding-agent (自动写代码)
+- ClawHub 技能市场（clawhub install/sync）
 
-## 自我优化
+## 已掌握
+- 浏览器自动化（browser tool）
+- GitHub HTTPS + 代理
+- 技能系统架构
+- 定时任务（cron）
+- 记忆系统（MEMORY.md + memory/）
+- 进化体系（lessons/patterns/evals/prompts）
+
+## 待优化
+- 搜索速度（浏览器比 API 慢）
+- 内存管理（8GB 偏紧）
 - 回复更简洁，不超300字
 - 不用 markdown 格式
 - 先结论再原因
