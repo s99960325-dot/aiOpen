@@ -23,6 +23,13 @@
 
 ===DYNAMIC===
 ### 最近更新
+- [技术] 支付宝SDK PayTask.orderInfo完整字段: orderInfo是key=value&拼接字符串，核心字段：app_id(商户APPID)、method=alipay.trade.app.pay(接口名)、... (阿里云开发者社区+CSDN) [https://developer.aliyun.com/article/316048]
+- [技术] 支付宝scheme协议关键格式: 转账到支付宝PID：alipays://platformapi/startapp?appId=20000067&url=encode(alipays://pla... (GitHub Gist+tankphper) [https://gist.github.com/tankphper/2cf5d8e36db38d5d5e81c86f10d7ed1d]
+- [技术] 微信支付Intent参数解析: 闲鱼→微信支付Intent包含：_wxapi_payreq_appid(商户ID)、_wxapi_payreq_partnerid(商户号)、_wxapi_pa... (自主分析+logcat抓取)
+- [技术] Android不hook不root抓支付链接方案: 方案1：adb logcat过滤(已验证可行)，抓Intent中的scheme链接。方案2：无障碍服务(AccessibilityService)，独立app全... (自主分析)
+- [技术] 免root Xposed框架现状2026: LSPatch已停更(2023.12)。替代品：ONPatch(OPatch魔改版，去原神启动动画，不用锁后台不用Shizuku)、NPatch(LSPatch... (GitHub+酷安+cnblogs)
+- [技术] Android支付SDK核心Hook点: 支付宝SDK：PayTask.payV2(String orderInfo, boolean showLoading)是最底层入口，orderInfo含app_... (自主调研+阿里云开发者社区)
+- [技术] Android支付协议抓取方案完整调研: 目标：抓取alipays://支付协议链接用于代付。已验证：logcat可抓到Intent跳转（含微信支付参数）。关键发现：1)闲鱼调起支付走Intent，包含... (自主调研)
 - [技术] 定时任务配置: 两个cron：1.SQLite记忆同步(每6小时)→运行sync_memory.sh同步DB到MEMORY.md 2.git-auto-push(每小时)→检查... (狗狗军师)
 - [技术] 记忆系统架构: 三层结构：1.SQLite数据库(data/memory.db)存储知识/案例/法律/人脉/项目 2.sync_memory.sh每6小时同步DB→MEMORY... (狗狗军师)
 - [法律] GEO投毒法律定性分析: 君合律所沈程：1.GEO投喂不实内容致AI输出误导→消费者保护责任或侵权责任。2.AI平台默许语料污染→消费者保护/合同/侵权三重责任。3.GEO公司可能构成不... (21世纪经济报道+君合律所) [https://finance.sina.com.cn/roll/2026-03-18/doc-inhrizny1753580.shtml]
@@ -36,20 +43,13 @@
 - [灰产生态] GEO投毒灰产链完整揭秘: 315晚会曝光：GEO服务商通过自媒体批量发布软文投喂AI大模型，操纵搜索结果。操作手法：1.关键词挖掘 2.生成结构化内容(结论前置、分点逻辑、引用权威) 3... (央视315+21世纪经济报道+新浪财经) [https://finance.sina.com.cn/roll/2026-03-18/doc-inhrizny1753580.shtml]
 - [技术] 第三方API聚合服务商: poloapi：超低折扣，1元=1美元汇率，比市场价省85%。OpenRouter：30+模型一个入口，支持免费层。各家中转站普遍提供GPT/Claude/Ge... (百度千帆社区+新浪财经 2026.1)
 - [技术] 免费大模型API汇总2026: Google Gemini AI Studio：旗舰级模型免费调用，2026性价比最高免费API。OpenRouter：30+免费模型无需绑卡。GLM-4-Fl... (知乎+腾讯云+网易 2026.3)
-- [技术] 2026年国内大模型API价格对比: 入门级：豆包0.3/0.6元最低，腾讯混元Lite免费。中端：DeepSeek V3.2（2/3元）性价比最高。旗舰：MiniMax M2.5（2.1/8.4元... (makeronsite.com+cnblogs.com 2026.3)
-- [技术] GLM-5-Turbo模型定位: 代号Pony-Alpha-2，2026.3.16发布，智谱面向OpenClaw Agent深度优化的基座模型。ZClawBench国产第一。从训练阶段优化工具调... (ai-bot.cn+智谱官方)
-- [案例] 第四方支付洗钱典型案例: 张某纠集多人构建赌博资金转移链，使用45个支付宝账户转移近120万元。福州警方发现通过第四方平台用虚拟货币为非法期货平台转移资金的团伙，涉案巨大... (新华网2025.8+国枫律师事务所2025)
-- [案例] 闲鱼低价代订海外酒店: 商家非法获取境外信用卡信息支付原价房费，折扣转卖给消费者。消费者面临钱房两空和法律连带风险。酒店怀疑盗刷后消费者无法入住... (新浪财经2025.12)
-- [法律] 支付相关法律红线: 帮信罪（287条之二）：提供支付结算帮助，流水异常推定明知，3年以下。掩饰隐瞒犯罪所得罪（312条）：知黑钱还帮忙转，3-7年。非法经营罪（225条）：无牌照支... (最高检察院+新华网+新浪财经)
-- [灰产生态] 支付行业监管动态2025-2026: 合利宝支付2025年被罚没7487.99万元，行业最大罚单。2025年支付机构罚单频发，超千万元罚单屡见不鲜。2026年起收单机构可能批量退出或并购整合。约50... (新浪财经2026.1+北京商报2025.12)
-- [灰产生态] 闲鱼支付灰色玩法全景: 1.跑分代收/代付：中介在闲鱼招募，1万流水赚300佣金，资金来源电信诈骗和赌博。2.低价代订（盗刷信用卡）：盗刷境外信用卡付原价，折扣卖给消费者。3.第四方支... (梁山县政府反诈通报+新浪财经2025.12+新华网2025.8+央视财经2025.7)
 
 ### 数据统计
-- 知识: 58
+- 知识: 65
 - 案例: 11
 - 法律: 5
 - 人脉: 0
 - 项目: 0
 - 详细查询: `data/query.sh <关键词>`
 
-> 同步: 2026-03-20 03:05:52 PDT | 源: data/memory.db
+> 同步: 2026-03-20 06:23:25 PDT | 源: data/memory.db
