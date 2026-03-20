@@ -25,13 +25,14 @@ cat "$HEADER_FILE" > "$TMP"
 # ========== 2. 最近20条知识（摘要） ==========
 echo "### 最近更新" >> "$TMP"
 sqlite3 -separator '|' "$DB" "
-SELECT category, title, substr(content,1,80), source
+SELECT category, title, substr(content,1,80), source, url
 FROM knowledge ORDER BY rowid DESC LIMIT 20
-" | while IFS='|' read -r cat title content source; do
+" | while IFS='|' read -r cat title content source url; do
   t=$(echo "$title" | sed 's/[][]//g')
   line="- [$cat] $t"
   [ -n "$content" ] && line="$line: ${content}..."
   [ -n "$source" ] && line="$line ($source)"
+  [ -n "$url" ] && line="$line [${url}]"
   echo "$line" >> "$TMP"
 done
 echo "" >> "$TMP"
