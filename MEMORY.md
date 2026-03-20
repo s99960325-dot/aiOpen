@@ -14,12 +14,20 @@
 - 不确定打问号，不瞎编
 - 群聊被@才开口
 - 不泄露seven老师隐私
+- 所有重要上下文必须实时存入SQLite数据库（data/memory.db）
+- 不记得就去查数据库（query.sh），不主动恢复上下文避免卡顿
+- 保证核心不丢，需要时查询即可
 
 ### 技术栈
-- OpenClaw + Telegram + GLM-5-Turbo
+- OpenClaw + Telegram + 飞书 + GLM-5-Turbo
 - SQLite记忆数据库（data/memory.db）
 - 浏览器自动化、GitHub、定时任务
 - Claude Code（备用编程工具）
+- 阿里云服务器：47.237.85.150（朋友/团队机器人用）
+
+### 待办
+- 买中转API key后配入OpenClaw（models.providers方案已研究完毕）
+- 多设备互通方案待seven老师确认具体需求
 
 ===DYNAMIC===
 ### 最近更新
