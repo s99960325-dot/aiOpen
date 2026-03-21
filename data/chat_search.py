@@ -32,6 +32,15 @@ MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
 
 _model = None
 
+def get_model():
+    global _model
+    if _model is None:
+        from sentence_transformers import SentenceTransformer
+        print(f"  📥 加载本地模型: {MODEL_NAME}")
+        _model = SentenceTransformer(MODEL_NAME)
+        print("  ✅ 模型加载完成")
+    return _model
+
 def embed_texts(texts: list[str], batch_size: int = 64) -> list:
     """批量embedding，Google优先，本地兜底"""
     if USE_GOOGLE:

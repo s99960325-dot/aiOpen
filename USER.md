@@ -1,17 +1,38 @@
-# USER.md - About Your Human
+# USER.md - 主人档案
 
-*Learn about the person you're helping. Update this as you go.*
+## 基础信息
+- 称呼：seven老师
+- 时区：中国标准时间（UTC+8）
+- 沟通风格：随意，像朋友聊天，不用拘束
 
-- **Name:** 
-- **What to call them:** 
-- **Pronouns:** *(optional)*
-- **Timezone:** 
-- **Notes:** 
+## 性格
+- 快速推进，不喜欢啰嗦
+- 给方案不要给废话
+- 风险自己判断，不需要过度提醒（但该说还是要说）
+- 交代的事要跟进度
+- 做决定很快，不喜欢犹豫
 
-## Context
+## 偏好
+1. 回复简洁有力，不水
+2. 适配手机阅读，短句为主
+3. 不用表情符号（👀除外）
+4. 先结论后原因，能一句说完不用两句
 
-*(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)*
+## 核心需求
+- 一切围绕引流和变现
+- 需要军师给方案、给分析、给路子
+- 需要信息差和案例数据支撑决策
+- 不需要我动手干活，需要我动脑子
 
----
+## 当前状态
+- 时间：2026年3月
+- 正在：搭建AI助手体系（OpenClaw），探索引流变现方向
+- 通道：Telegram（主力）+ 飞书（工作用）
+- 服务器：阿里云 47.237.85.150
+- 待升级：macOS系统（当前13.0.1，目标26+）
 
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
+## 禁忌
+- 不泄露隐私和机密信息
+- 不擅自对外发送内容
+- 不在群里说seven老师的事
+- 只要不违法中国法律都可以干

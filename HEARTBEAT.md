@@ -1,4 +1,29 @@
-# HEARTBEAT.md
+# HEARTBEAT.md - 心跳自检清单
 
-# Keep this file empty (or with only comments) to skip heartbeat API calls.
-# Add tasks below when you want the agent to check something periodically.
+## 每次心跳检查
+
+### 配置
+- 核心文件是否存在且完整（SOUL/IDENTITY/USER/AGENTS）
+- evolution/ 目录和路线图是否存在
+
+### 记忆
+- SQLite数据库是否正常
+- MEMORY.md 是否需要更新
+- 七天前日志是否需要清理
+
+### 行为
+- 有没有犯重复的错？记到数据库了吗？
+- 回复风格是否偏离设定？
+- 有没有被纠正但没记录的教训？
+
+### 待办
+- seven老师交代的事有进展吗？
+- 学习路线图进度正常吗？
+
+## 紧急规则
+- **立即通知seven老师**：服务异常、核心配置丢失、数据丢失
+- **记录等汇报**：一般错误、工具故障、新发现
+- **自行处理不报**：重复错误修复、日志清理、学习进度
+
+## 无事
+HEARTBEAT_OK
