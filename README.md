@@ -17,9 +17,11 @@
 
 ## 🧠 记忆系统（核心）
 
-三层架构，保证核心信息零丢失：
+四层架构，保证核心信息零丢失：
 
 ```
+QMD向量搜索（本地）           ← BM25+向量+重排序+查询扩展，零token
+         ↕
 SQLite数据库(data/memory.db)  ← 实时写入，持久存储
          ↓ 每6小时自动同步
     MEMORY.md                 ← 核心索引，<3K tokens
@@ -27,9 +29,11 @@ SQLite数据库(data/memory.db)  ← 实时写入，持久存储
   memory/YYYY-MM-DD.md        ← 当天详细日志
 ```
 
+- **QMD搜索**：4个本地模型（embeddinggemma-300M / Qwen3-Embedding-0.6B / qwen3-reranker-0.6b / qmd-query-expansion-1.7B），按需加载不占内存
 - 查询脚本：`data/query.sh <关键词>`
 - 同步脚本：`data/sync_memory.sh`（cron每6小时）
-- 数据库分类：知识/案例/法律/人脉/项目
+- 数据库分类：知识(151) / 案例(11) / 法律 / 人脉 / 项目(1)
+- GitHub备份：记忆数据库 → `aiOpen/memory` 分支，每6小时自动推送
 
 ---
 
@@ -69,8 +73,20 @@ SQLite数据库(data/memory.db)  ← 实时写入，持久存储
 - **模型**：GLM-5-Turbo（智谱）
 - **记忆**：SQLite + Markdown 双层
 - **工具链**：浏览器自动化 / GitHub / Cron定时任务
-- **编程**：Claude Code（备用）
+- **编程**：Claude Code / ACP（备用）
 - **服务器**：阿里云 47.237.85.150（团队机器人）
+
+### GitHub备份策略
+| 分支 | 内容 | 频率 |
+|------|------|------|
+| `main` | workspace代码+配置 | 每6小时 + 重要操作后 |
+| `memory` | 记忆数据库(SQLite) | 每6小时 |
+
+### 已装Skills（18/63）
+| 类别 | Skills |
+|------|--------|
+| 飞书全家桶 | 多维表格、日历、IM、文档创建/获取/更新、任务、问题排查、频道规则 |
+| 内置工具 | weather、healthcheck、peekaboo、qmd、safety-executor、skill-creator、slack |
 
 ---
 
@@ -82,5 +98,6 @@ SQLite数据库(data/memory.db)  ← 实时写入，持久存储
 
 ## 📊 更新日志
 
+- **2026-03-21**：QMD向量搜索部署（4模型）、GitHub记忆备份（memory分支）、自动备份cron、飞书插件全家桶、Peekaboo安装
 - **2026-03-20**：记忆系统升级（SQLite铁律）、核心配置更新、GitHub推送修复
 - **2026-03-19**：初始化 + 进化体系部署 + Telegram接入 + 闲鱼支付协议调研
