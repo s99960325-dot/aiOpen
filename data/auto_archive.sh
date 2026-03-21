@@ -1,7 +1,8 @@
 #!/bin/bash
-# 对话自动存档脚本 v2
+# 对话自动存档脚本 v3
+# 修复：去掉10分钟时间限制，改用索引文件跟踪已归档session
 # 功能：解析session文件 → 存SQLite向量索引 → 写md备份
-# 用法：每30分钟cron自动跑一次
+# 用法：每15分钟cron自动跑一次
 
 set -e
 
@@ -39,7 +40,10 @@ fi
 # ============ 第二部分：md对话归档 ============
 echo "  📝 开始md归档..."
 
-RECENT_MTIME=$(($(date +%s) - 600))  # 10分钟内活跃的session
+# 记录已归档session的索引文件（不依赖当日归档文件）
+ARCHIVED_INDEX="$ARCHIVE_DIR/.archived_sessions.txt"
+[ -f "$ARCHIVED_INDEX" ] || touch "$ARCHIVED_INDEX"
+
 TODAY_START=$(date -j -f "%Y-%m-%d" "$TODAY" "+%s" 2>/dev/null || date -d "$TODAY" "+%s" 2>/dev/null)
 FOUND=0
 
@@ -54,14 +58,11 @@ for f in "$SESSIONS_DIR"/*.jsonl; do
     [ -f "$f" ] || continue
     [[ "$f" == *".reset."* || "$f" == *".deleted."* ]] && continue
 
-    mtime=$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f" 2>/dev/null)
-    [ "$mtime" -lt "$RECENT_MTIME" ] && continue
-
     SESSION_ID=$(basename "$f" .jsonl)
     SESSION_SHORT=$(echo "$SESSION_ID" | cut -c1-12)
 
-    # 检查是否已归档
-    grep -q "$SESSION_SHORT" "$ARCHIVE_FILE" 2>/dev/null && continue
+    # 检查是否已归档（通过索引文件）
+    grep -q "^${SESSION_SHORT}$" "$ARCHIVED_INDEX" 2>/dev/null && continue
 
     # 用Python提取今天的消息
     EXTRACTED=$($PYTHON -c "
@@ -83,7 +84,7 @@ try:
                 role = msg.get('role', '')
                 if role not in ('user', 'assistant'): continue
                 ts = msg.get('ts', 0) or entry.get('ts', 0)
-                if ts < today_start: continue
+                if ts > 0 and ts < today_start: continue
                 content = msg.get('content', '')
                 if isinstance(content, str):
                     text = content
@@ -105,6 +106,9 @@ except Exception as e:
 for m in messages:
     print(m)
 " "$f" 2>&1)
+
+    # 标记为已处理（无论是否有今天的新消息）
+    echo "$SESSION_SHORT" >> "$ARCHIVED_INDEX"
 
     [ -z "$EXTRACTED" ] && continue
 

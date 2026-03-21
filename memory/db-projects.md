@@ -1,0 +1,1 @@
+# 项目库 (projects)\n\n## google-search-bot\n\n> 状态: 进行中 | 工具: patchright, kimi-code, duckduckgo\n\nKimi Code写了完整脚本但Google触发验证码。需改用DuckDuckGo主搜索。Kimi API余额不足(429)待充值。\n\n路径：projects/google-search-bot/google_search_scraper.py。seven老师要求用Kimi Code修复脚本，等Kimi充值后继续。\n
