@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "deep-thinking": {
+      "version": "1.0.0",
+      "installedAt": 1774093466383
+    },
+    "context-optimizer": {
+      "version": "1.0.0",
+      "installedAt": 1774093507641
+    },
+    "memory-tiering": {
+      "version": "1.0.0",
+      "installedAt": 1774093518570
+    }
+  }
+}
