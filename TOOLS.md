@@ -3,8 +3,13 @@
 Skills define *how* tools work. This file is for *your* specifics.
 
 ## 记忆系统
+- **QMD后端**（主力）：本地BM25+向量+rerank搜索，零token消耗
+  - 配置：openclaw.json → memory.backend = "qmd"
+  - 本地模型：paraphrase-multilingual-MiniLM-L12-v2
+  - 自动索引刷新：每5分钟
 - SQLite数据库：data/memory.db（知识/案例/法律/人脉/项目）
 - 查询脚本：data/query.sh <关键词>
+- 归档脚本：data/auto_archive.sh（自动归档对话+向量化）
 - 同步脚本：data/sync_memory.sh（每6小时cron自动同步DB→MEMORY.md）
 - 日志目录：memory/YYYY-MM-DD.md（每日详细记录）
 
