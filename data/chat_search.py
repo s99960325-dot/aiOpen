@@ -23,20 +23,70 @@ from collections import Counter
 # 配置
 SESSIONS_DIR = os.path.expanduser("~/.openclaw/agents/main/sessions")
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chat_memory.db")
-MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"  # 多语言，90MB，离线用
+GOOGLE_API_KEY = "AIzaSyDPQTqMYyRPv7LQofPzAct0HtEzZ5hAUYk"
+# Google embedding优先，本地模型兜底
+USE_GOOGLE = True
+MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
 
 # ---------- 全局模型 ----------
 
 _model = None
 
-def get_model():
-    global _model
-    if _model is None:
-        print("📦 加载embedding模型（首次会下载~90MB）...")
-        from sentence_transformers import SentenceTransformer
-        _model = SentenceTransformer(MODEL_NAME)
-        print("   ✅ 模型加载完成")
-    return _model
+def embed_texts(texts: list[str], batch_size: int = 64) -> list:
+    """批量embedding，Google优先，本地兜底"""
+    if USE_GOOGLE:
+        try:
+            return _google_embed(texts, batch_size)
+        except Exception as e:
+            print(f"  ⚠️ Google失败，回退本地模型: {e}")
+    
+    # 本地模型兜底
+    model = get_model()
+    all_embs = []
+    for i in range(0, len(texts), batch_size):
+        batch = texts[i:i + batch_size]
+        embs = model.encode(batch, show_progress_bar=False, normalize_embeddings=True)
+        all_embs.extend(embs.tolist())
+        print(f"   本地模型 {min(100, (i+batch_size)/len(texts)*100):.0f}%", end="\r", flush=True)
+    return all_embs
+
+def embed_query(text: str) -> list:
+    if USE_GOOGLE:
+        try:
+            return _google_embed_query(text)
+        except Exception:
+            pass
+    model = get_model()
+    return model.encode([text], normalize_embeddings=True)[0].tolist()
+
+def _google_embed(texts: list[str], batch_size: int = 100) -> list:
+    import urllib.request
+    url = "https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:batchEmbedContents?key=" + GOOGLE_API_KEY
+    all_embs = [None] * len(texts)
+    for i in range(0, len(texts), batch_size):
+        batch = texts[i:i + batch_size]
+        payload = json.dumps({
+            "requests": [{"model": "models/text-embedding-004", "content": {"parts": [{"text": t}]}} for t in batch]
+        }).encode()
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        import ssl
+        ctx = ssl.create_default_context()
+        resp = urllib.request.urlopen(req, timeout=30, context=ctx)
+        result = json.loads(resp.read().decode())
+        for j, item in enumerate(result.get("embeddings", [])):
+            all_embs[i + j] = item["values"]
+    return all_embs
+
+def _google_embed_query(text: str) -> list:
+    import urllib.request
+    url = "https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=" + GOOGLE_API_KEY
+    payload = json.dumps({"model": "models/text-embedding-004", "content": {"parts": [{"text": text}]}}).encode()
+    req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+    import ssl
+    ctx = ssl.create_default_context()
+    resp = urllib.request.urlopen(req, timeout=30, context=ctx)
+    result = json.loads(resp.read().decode())
+    return result["embedding"]["values"]
 
 # ---------- 中文分词 ----------
 
