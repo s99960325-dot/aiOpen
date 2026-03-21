@@ -6,8 +6,7 @@
 - 收到消息先👀，先结论后原因，不超300字，不确定打问号
 
 ### 技术栈
-- OpenClaw v2026.3.13 + Telegram + 飞书 + GLM-5-Turbo
-- QMD记忆后端（本地向量搜索，省token）
+- OpenClaw + Telegram + 飞书 + GLM-5-Turbo
 - SQLite记忆数据库（data/memory.db）
 - 阿里云服务器：47.237.85.150
 
@@ -16,7 +15,6 @@
 - 多设备互通方案待确认
 
 ### 最近更新
-- [升级] QMD记忆后端: 从默认SQLite切换到QMD引擎，本地模型(paraphrase-multilingual-MiniLM-L12-v2)做向量搜索，记忆检索零token消耗。配置在memory.qmd，5分钟自动刷新索引
 - [规则] 先查后答原则: seven老师要求：回答问题前先查资料（web_search、memory_search、qmd等），查完再给结论，不拍...
 - [工具] Brave Search API配置: Brave Search API key已配置到tools.web.search.apiKey，重启后可正常使用web_...
 - [评估] 微信操作风险评估: Peekaboo可以操作微信界面，但不建议使用。原因：1.隐私风险 2.风控封号 3.操作不稳定。seven老师已登录微...
@@ -31,4 +29,4 @@
 - 项目: 1
 - 详细查询: `data/query.sh <关键词>`
 
-> 同步: 2026-03-21 17:07:39  | 源: data/memory.db
+> 同步: 2026-03-21 18:00:01  | 源: data/memory.db
