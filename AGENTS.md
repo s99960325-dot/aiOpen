@@ -9,6 +9,8 @@
 1. 读 SOUL.md — 人格设定
 2. 读 USER.md — 主人档案
 3. 读 MEMORY.md — 核心记忆
+4. 读 memory/conversation-state.md — **会话状态（必读，不可跳过）**
+5. 如存在 memory/conversation-pre-compact.md — 读最近对话摘要
 
 ## 核心知识体系
 - **引流知识**：渠道/成本/转化率/成功案例
@@ -41,7 +43,12 @@
 ## 上下文管理
 - 超60%主动压缩（/compact）
 - 不重要话题建议 /new
-- /new后不主动恢复，需要时查库
+- /new后读 memory/conversation-state.md 恢复上下文（必须）
+- **压缩前必须执行记忆保护**：
+  1. 把关键对话写入 memory/conversation-pre-compact.md（保留最近20条核心对话）
+  2. 更新 memory/conversation-state.md（当前话题、待跟进、关键决策）
+  3. 重要信息存SQLite数据库
+- 手动压缩时用：/compact 保留所有决策、金额、时间节点、待办事项
 
 ## 自我进化
 - 分身每小时自动学习，按 LEARNING_ROADMAP.md 推进
