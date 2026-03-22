@@ -282,226 +282,192 @@
             <span class="text-xs text-slate-500">SOUL / AGENTS / USER / MEMORY</span>
         </div>
         
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            <!-- 原始问题 -->
-            <div class="p-4 rounded-lg bg-slate-800/50 border border-red-500/20">
-                <div class="flex items-center gap-2 mb-3">
-                    <i class="fas fa-exclamation-triangle text-red-400"></i>
-                    <span class="text-sm font-medium text-slate-200">原始问题</span>
-                </div>
-                <ul class="text-xs text-slate-400 space-y-2">
-                    <li class="flex items-start gap-2">
-                        <span class="text-red-400 mt-0.5">•</span>
-                        <span>重复内容多：SOUL/AGENTS/USER多处重复（简洁沟通、引流变现核心）</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <span class="text-red-400 mt-0.5">•</span>
-                        <span>职责不清：四文件边界模糊，不知道改哪个</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <span class="text-red-400 mt-0.5">•</span>
-                        <span>启动顺序混乱：读文件顺序不明确</span>
-                    </li>
-                </ul>
-            </div>
-            
-            <!-- 讨论过程 - 聊天形式 -->
-            <div class="p-4 rounded-lg bg-slate-800/50 border border-blue-500/20 lg:col-span-2">
-                <div class="flex items-center gap-2 mb-3">
-                    <i class="fas fa-comments text-blue-400"></i>
-                    <span class="text-sm font-medium text-slate-200">讨论过程</span>
-                </div>
-                <div class="space-y-3 max-h-80 overflow-y-auto pr-2" id="discussion-chat">
-                    <!-- seven老师 - 左边绿色气泡 -->
-                    <div class="flex items-start gap-2">
-                        <div class="w-7 h-7 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-user text-green-400 text-xs"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-xs text-green-400 mb-0.5">seven老师</div>
-                            <div class="inline-block px-3 py-1.5 rounded-2xl rounded-tl-sm bg-green-500/20 border border-green-500/30 text-slate-200 text-xs">
-                                把你们讨论的过程显示在数据大屏里面做一个频道
-                            </div>
-                        </div>
+        <!-- 完整聊天对话框 -->
+        <div class="p-4 rounded-lg bg-slate-800/50 border border-slate-700/50">
+            <div class="space-y-4 max-h-96 overflow-y-auto pr-2" id="discussion-chat">
+                <!-- 1. seven老师 - 左，绿 -->
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user text-green-400 text-sm"></i>
                     </div>
-                    
-                    <!-- 狗狗军师 - 右边蓝色气泡 -->
-                    <div class="flex items-start gap-2 flex-row-reverse">
-                        <div class="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-dog text-blue-400 text-xs"></i>
-                        </div>
-                        <div class="flex-1 flex flex-col items-end min-w-0">
-                            <div class="text-xs text-blue-400 mb-0.5">狗狗军师</div>
-                            <div class="inline-block px-3 py-1.5 rounded-2xl rounded-tr-sm bg-blue-500/20 border border-blue-500/30 text-slate-200 text-xs">
-                                明白了，已新增「重构讨论」频道，放讨论过程和最终方案
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- seven老师 - 左边绿色气泡 -->
-                    <div class="flex items-start gap-2">
-                        <div class="w-7 h-7 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-user text-green-400 text-xs"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-xs text-green-400 mb-0.5">seven老师</div>
-                            <div class="inline-block px-3 py-1.5 rounded-2xl rounded-tl-sm bg-green-500/20 border border-green-500/30 text-slate-200 text-xs">
-                                把讨论过程做成对话框呀，要聊天形式，带用户名
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Kimi - 左边灰色气泡 -->
-                    <div class="flex items-start gap-2">
-                        <div class="w-7 h-7 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-robot text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-xs text-slate-400 mb-0.5">Kimi</div>
-                            <div class="inline-block px-3 py-1.5 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-xs">
-                                开始分析 → 发现原始问题：核心配置重复内容多，职责不清
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Kimi - 左边灰色气泡 -->
-                    <div class="flex items-start gap-2">
-                        <div class="w-7 h-7 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-robot text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-xs text-slate-400 mb-0.5">Kimi</div>
-                            <div class="inline-block px-3 py-1.5 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-xs">
-                                第一轮讨论：重复规则多 → IDENTITY空着没用 → MEMORY混杂内容
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Kimi - 左边灰色气泡 -->
-                    <div class="flex items-start gap-2">
-                        <div class="w-7 h-7 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-robot text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-xs text-slate-400 mb-0.5">Kimi</div>
-                            <div class="inline-block px-3 py-1.5 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-xs">
-                                第一轮方案：各司其职 → SOUL管人格，AGENTS管运行，USER管主人，MEMORY管索引，删除IDENTITY
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Kimi - 左边灰色气泡 -->
-                    <div class="flex items-start gap-2">
-                        <div class="w-7 h-7 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-robot text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-xs text-slate-400 mb-0.5">Kimi</div>
-                            <div class="inline-block px-3 py-1.5 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-xs">
-                                结合进化记忆维度讨论：发现AGENTS职责过重，记忆和进化没打通，需要形成闭环
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Kimi - 左边灰色气泡 -->
-                    <div class="flex items-start gap-2">
-                        <div class="w-7 h-7 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-robot text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-xs text-slate-400 mb-0.5">Kimi</div>
-                            <div class="inline-block px-3 py-1.5 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-xs">
-                                最终优化方案：SOUL加进化本能，AGENTS只留触发规则，MEMORY加进化索引，形成完整闭环
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Kimi - 左边灰色气泡 -->
-                    <div class="flex items-start gap-2">
-                        <div class="w-7 h-7 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-robot text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-xs text-slate-400 mb-0.5">Kimi</div>
-                            <div class="inline-block px-3 py-1.5 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-xs">
-                                结论：结构完美，闭环形成，支持可持续进化
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 狗狗军师 - 右边蓝色气泡 -->
-                    <div class="flex items-start gap-2 flex-row-reverse">
-                        <div class="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-dog text-blue-400 text-xs"></i>
-                        </div>
-                        <div class="flex-1 flex flex-col items-end min-w-0">
-                            <div class="text-xs text-blue-400 mb-0.5">狗狗军师</div>
-                            <div class="inline-block px-3 py-1.5 rounded-2xl rounded-tr-sm bg-blue-500/20 border border-blue-500/30 text-slate-200 text-xs">
-                                改好了，已放到监控大屏
-                            </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs text-green-400 mb-1 font-medium">seven老师</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tl-sm bg-green-500/20 border border-green-500/30 text-slate-200 text-sm">
+                            核心配置文件重复内容多，职责不清，需要优化结构
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- 最终方案 -->
-            <div class="p-4 rounded-lg bg-slate-800/50 border border-green-500/20">
-                <div class="flex items-center gap-2 mb-3">
-                    <i class="fas fa-check-circle text-green-400"></i>
-                    <span class="text-sm font-medium text-slate-200">最终方案</span>
-                </div>
-                <div class="text-xs space-y-2">
-                    <div class="flex items-center gap-2 p-2 rounded bg-purple-500/10 border border-purple-500/20">
-                        <span class="text-purple-400 font-mono">SOUL</span>
-                        <span class="text-slate-400">→</span>
-                        <span class="text-slate-300">管本能（性格/思维/进化）</span>
+                
+                <!-- 2. 狗狗军师 - 右，蓝 -->
+                <div class="flex items-start gap-3 flex-row-reverse">
+                    <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-dog text-blue-400 text-sm"></i>
                     </div>
-                    <div class="flex items-center gap-2 p-2 rounded bg-indigo-500/10 border border-indigo-500/20">
-                        <span class="text-indigo-400 font-mono">USER</span>
-                        <span class="text-slate-400">→</span>
-                        <span class="text-slate-300">管反馈（主人偏好/禁忌）</span>
-                    </div>
-                    <div class="flex items-center gap-2 p-2 rounded bg-cyan-500/10 border border-cyan-500/20">
-                        <span class="text-cyan-400 font-mono">AGENTS</span>
-                        <span class="text-slate-400">→</span>
-                        <span class="text-slate-300">管触发（启动/行为/SOP）</span>
-                    </div>
-                    <div class="flex items-center gap-2 p-2 rounded bg-amber-500/10 border border-amber-500/20">
-                        <span class="text-amber-400 font-mono">MEMORY</span>
-                        <span class="text-slate-400">→</span>
-                        <span class="text-slate-300">管索引（查询/统计/同步）</span>
+                    <div class="flex-1 flex flex-col items-end min-w-0">
+                        <div class="text-xs text-blue-400 mb-1 font-medium">狗狗军师</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tr-sm bg-blue-500/20 border border-blue-500/30 text-slate-200 text-sm">
+                            明白了，我让Kimi一起从多个角度讨论下
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- 闭环机制 -->
-            <div class="p-4 rounded-lg bg-slate-800/50 border border-purple-500/20">
-                <div class="flex items-center gap-2 mb-3">
-                    <i class="fas fa-sync-alt text-purple-400"></i>
-                    <span class="text-sm font-medium text-slate-200">闭环机制</span>
+                
+                <!-- 3. Kimi - 左，灰 -->
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-slate-400 text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs text-slate-400 mb-1 font-medium">Kimi</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-sm">
+                            第一轮分析：发现重复规则多，启动流程冲突，IDENTITY空着没用，MEMORY混杂内容
+                        </div>
+                    </div>
                 </div>
-                <div class="text-xs text-slate-400">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="px-2 py-1 rounded bg-red-500/20 text-red-300">犯错</span>
-                        <i class="fas fa-arrow-right text-slate-600"></i>
-                        <span class="px-2 py-1 rounded bg-orange-500/20 text-orange-300">lessons</span>
+                
+                <!-- 4. Kimi - 左，灰 -->
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-slate-400 text-sm"></i>
                     </div>
-                    <div class="flex items-center justify-between mb-2">
-                        <i class="fas fa-arrow-down text-slate-600 ml-auto mr-2"></i>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs text-slate-400 mb-1 font-medium">Kimi</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-sm">
+                            第一轮方案：各司其职 → SOUL管人格，AGENTS管运行，USER管主人，MEMORY管索引，删除IDENTITY
+                        </div>
                     </div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="px-2 py-1 rounded bg-green-500/20 text-green-300">更新规则</span>
-                        <i class="fas fa-arrow-left text-slate-600"></i>
-                        <span class="px-2 py-1 rounded bg-blue-500/20 text-blue-300">周日提炼</span>
+                </div>
+                
+                <!-- 5. seven老师 - 左，绿 -->
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user text-green-400 text-sm"></i>
                     </div>
-                    <div class="mt-3 pt-2 border-t border-slate-700/50 text-center">
-                        <span class="text-slate-500">每周日 23:00 自动执行</span>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs text-green-400 mb-1 font-medium">seven老师</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tl-sm bg-green-500/20 border border-green-500/30 text-slate-200 text-sm">
+                            结合进化和记忆两个维度再讨论，给我最优方案
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 6. Kimi - 左，灰 -->
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-slate-400 text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs text-slate-400 mb-1 font-medium">Kimi</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-sm">
+                            结合进化记忆维度：发现AGENTS职责过重，记忆和进化没打通，需要形成闭环
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 7. Kimi - 左，灰 -->
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-slate-400 text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs text-slate-400 mb-1 font-medium">Kimi</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-sm">
+                            最终优化方案：SOUL加进化本能，AGENTS只留触发规则，MEMORY加进化索引，形成完整闭环
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 8. Kimi - 左，灰 -->
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-slate-400 text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs text-slate-400 mb-1 font-medium">Kimi</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-sm">
+                            结论：结构完美，闭环形成，支持可持续进化
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 9. 狗狗军师 - 右，蓝 -->
+                <div class="flex items-start gap-3 flex-row-reverse">
+                    <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-dog text-blue-400 text-sm"></i>
+                    </div>
+                    <div class="flex-1 flex flex-col items-end min-w-0">
+                        <div class="text-xs text-blue-400 mb-1 font-medium">狗狗军师</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tr-sm bg-blue-500/20 border border-blue-500/30 text-slate-200 text-sm">
+                            方案确定，执行重构，四大文件调整完成
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 10. seven老师 - 左，绿 -->
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user text-green-400 text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs text-green-400 mb-1 font-medium">seven老师</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tl-sm bg-green-500/20 border border-green-500/30 text-slate-200 text-sm">
+                            把讨论过程放数据大屏，做一个频道
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 11. 狗狗军师 - 右，蓝 -->
+                <div class="flex items-start gap-3 flex-row-reverse">
+                    <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-dog text-blue-400 text-sm"></i>
+                    </div>
+                    <div class="flex-1 flex flex-col items-end min-w-0">
+                        <div class="text-xs text-blue-400 mb-1 font-medium">狗狗军师</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tr-sm bg-blue-500/20 border border-blue-500/30 text-slate-200 text-sm">
+                            明白了，已新增频道，放讨论过程和最终方案
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 12. seven老师 - 左，绿 -->
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user text-green-400 text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs text-green-400 mb-1 font-medium">seven老师</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tl-sm bg-green-500/20 border border-green-500/30 text-slate-200 text-sm">
+                            做成对话框，要聊天形式，带用户名
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 13. Kimi - 左，灰 -->
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-slate-400 text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs text-slate-400 mb-1 font-medium">Kimi</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tl-sm bg-slate-600/40 border border-slate-500/30 text-slate-200 text-sm">
+                            好的，改成聊天形式，区分发送者，带气泡
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 14. 狗狗军师 - 右，蓝 -->
+                <div class="flex items-start gap-3 flex-row-reverse">
+                    <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-dog text-blue-400 text-sm"></i>
+                    </div>
+                    <div class="flex-1 flex flex-col items-end min-w-0">
+                        <div class="text-xs text-blue-400 mb-1 font-medium">狗狗军师</div>
+                        <div class="inline-block px-4 py-2 rounded-2xl rounded-tr-sm bg-blue-500/20 border border-blue-500/30 text-slate-200 text-sm">
+                            改好了，已放到监控大屏
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
