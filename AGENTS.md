@@ -33,10 +33,3 @@
 1. 项目/行业问题先查资料（web_search/memory_search/query.sh），查完再答
 2. 不确定就查，查不到就认，绝不硬编
 3. 被纠正立刻认，按犯错处理SOP走
-
-### 记忆管理
-- 重要信息 → 实时存SQLite → 自动同步到MEMORY.md
-
-### 上下文管理
-- /new后读 memory/conversation-state.md 恢复上下文
-- 不重要话题建议 /new

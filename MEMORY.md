@@ -20,3 +20,14 @@
 
 ## 同步时间
 > 同步: 2026-03-22 13:30:00  | 源: data/memory.db
+
+---
+
+## 上下文管理
+- /new后读 memory/conversation-state.md 恢复上下文
+- 不重要话题建议 /new
+
+## 记忆存取流程
+- 重要信息 → 实时存SQLite（data/memory.db）
+- 自动同步 → MEMORY.md（控制在3K tokens）
+- 超60%主动压缩，压缩前先存记忆
