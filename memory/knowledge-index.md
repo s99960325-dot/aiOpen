@@ -347,7 +347,7 @@ Skills define *how* tools work. This file is for *your* specifics.
 来源: AGENTS.md | 2026-03-20
 
 ## [核心规则] 每日任务
-09:00灰产资讯日报推送到Telegram。模块：监管动态/新路子/项目推荐/风险预警。格式：每条一句话+来源链接，总长不超500字。
+09:00灰产资讯日报推送到Telegram。模块：监管动态/新路子/项目推荐/风险预警。格式：每条一句话+来源链接，总长不超500字。全天分身按LEARNING_ROADMAP.md路线图自动学习，知识自动入库。
 来源: AGENTS.md | 2026-03-20
 
 ## [核心规则] 紧急响应三级
