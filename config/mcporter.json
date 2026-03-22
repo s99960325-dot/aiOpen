@@ -2,7 +2,7 @@
   "mcpServers": {
     "kimi-cli-bridge": {
       "command": "kimi",
-      "args": []
+      "args": ["acp"]
     }
   }
 }
