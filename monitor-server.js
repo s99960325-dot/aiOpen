@@ -2,8 +2,22 @@ const http = require('http');
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
 
 const PORT = 3000;
+
+// 内存缓存
+const cache = {
+  stats: null,
+  timestamp: 0,
+  ttl: 3000  // 3秒缓存
+};
+
+// 检查是否为移动端请求
+function isMobileRequest(req) {
+  const ua = req.headers['user-agent'] || '';
+  return /iPhone|iPad|iPod|Android|Mobile/i.test(ua);
+}
 
 // 获取系统资源信息
 function getSystemStats() {
@@ -121,8 +135,9 @@ function getSkills() {
   };
 }
 
-// 获取最近日志
-function getRecentLogs() {
+// 获取最近日志（移动端减少条数）
+function getRecentLogs(isMobile = false) {
+  const maxLogs = isMobile ? 5 : 20;  // 移动端只返回5条
   const logs = [];
   const levels = ['info', 'warn', 'error'];
   const messages = {
@@ -182,7 +197,7 @@ function getRecentLogs() {
     }
   }
   
-  return logs.slice(0, 20);
+  return logs.slice(0, maxLogs);
 }
 
 // 获取心跳状态
@@ -207,7 +222,20 @@ const server = http.createServer((req, res) => {
     return;
   }
   
+  const mobile = isMobileRequest(req);
+  
   if (req.url === '/api/stats') {
+    // 使用缓存（移动端和非移动端共享缓存）
+    const now = Date.now();
+    if (cache.stats && (now - cache.timestamp) < cache.ttl) {
+      res.writeHead(200, { 
+        'Content-Type': 'application/json',
+        'Cache-Control': 'max-age=3'
+      });
+      res.end(JSON.stringify(cache.stats));
+      return;
+    }
+    
     const stats = {
       system: {
         ...getSystemStats(),
@@ -216,28 +244,87 @@ const server = http.createServer((req, res) => {
       ai: getAIStats(),
       sessions: getSessionStats(),
       skills: getSkills(),
-      logs: getRecentLogs(),
+      logs: getRecentLogs(mobile),
       heartbeat: getHeartbeat(),
       version: getVersion(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      mobile: mobile  // 标记是否为移动端
     };
     
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(stats));
+    // 更新缓存
+    cache.stats = stats;
+    cache.timestamp = now;
+    
+    const response = JSON.stringify(stats);
+    
+    // 支持gzip压缩
+    const acceptEncoding = req.headers['accept-encoding'] || '';
+    if (acceptEncoding.includes('gzip') && response.length > 1024) {
+      res.writeHead(200, { 
+        'Content-Type': 'application/json',
+        'Content-Encoding': 'gzip',
+        'Cache-Control': 'max-age=3'
+      });
+      zlib.gzip(response, (err, compressed) => {
+        if (err) {
+          res.end(response);
+        } else {
+          res.end(compressed);
+        }
+      });
+      return;
+    }
+    
+    res.writeHead(200, { 
+      'Content-Type': 'application/json',
+      'Cache-Control': 'max-age=3'
+    });
+    res.end(response);
     return;
   }
   
-  // 可以直接 serve monitor.html
-  if (req.url === '/' || req.url === '/monitor.html') {
-    fs.readFile(path.join(__dirname, 'monitor.html'), (err, content) => {
+  // 移动端轻量配置API
+  if (req.url === '/api/config/mobile') {
+    const mobileConfig = {
+      refreshInterval: 10000,
+      maxLogs: 10,
+      contextWindow: 64000,
+      lazyLoad: true,
+      skills: ['context-optimizer', 'memory-tiering']
+    };
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(mobileConfig));
+    return;
+  }
+  
+  // 静态文件服务
+  const serveFile = (filePath, contentType) => {
+    fs.readFile(path.join(__dirname, filePath), (err, content) => {
       if (err) {
         res.writeHead(404);
         res.end('Not found');
         return;
       }
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      // 添加缓存头
+      const headers = { 'Content-Type': contentType };
+      if (filePath.includes('monitor-mobile.js') || filePath.includes('monitor-sw.js')) {
+        headers['Cache-Control'] = 'max-age=3600';  // JS文件缓存1小时
+      }
+      res.writeHead(200, headers);
       res.end(content);
     });
+  };
+  
+  // 路由映射
+  const routes = {
+    '/': ['monitor.html', 'text/html; charset=utf-8'],
+    '/monitor.html': ['monitor.html', 'text/html; charset=utf-8'],
+    '/monitor-mobile.js': ['monitor-mobile.js', 'application/javascript'],
+    '/monitor-sw.js': ['monitor-sw.js', 'application/javascript']
+  };
+  
+  if (routes[req.url]) {
+    serveFile(routes[req.url][0], routes[req.url][1]);
     return;
   }
   

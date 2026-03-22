@@ -591,11 +591,24 @@
         </div>
     </footer>
 
+    <!-- 移动端优化脚本 -->
+    <script src="/monitor-mobile.js" defer></script>
+    
+    <!-- Service Worker 注册 -->
     <script>
-        // Configuration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/monitor-sw.js')
+                .then(reg => console.log('SW registered'))
+                .catch(err => console.log('SW registration failed'));
+        }
+    </script>
+    
+    <script>
+        // Configuration - 移动端自适应
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         const CONFIG = {
-            refreshInterval: 5000,
-            maxLogs: 20,
+            refreshInterval: isMobile ? 10000 : 5000,  // 移动端降低刷新频率
+            maxLogs: isMobile ? 10 : 20,               // 移动端减少日志条数
             apiUrl: '/api/stats'
         };
 
@@ -703,6 +716,29 @@
             document.getElementById('last-update').textContent = new Date().toLocaleTimeString('zh-CN');
         }
 
+        // 缓存工具
+        const MobileCache = {
+            get(key) {
+                try {
+                    const item = localStorage.getItem(`oc_${key}`);
+                    if (!item) return null;
+                    const { value, timestamp } = JSON.parse(item);
+                    if (Date.now() - timestamp > 5 * 60 * 1000) {
+                        localStorage.removeItem(`oc_${key}`);
+                        return null;
+                    }
+                    return value;
+                } catch (e) { return null; }
+            },
+            set(key, value) {
+                try {
+                    localStorage.setItem(`oc_${key}`, JSON.stringify({
+                        value, timestamp: Date.now()
+                    }));
+                } catch (e) {}
+            }
+        };
+        
         // Main refresh function - fetch from API
         async function refresh() {
             const btn = document.getElementById('refresh-btn');
@@ -711,8 +747,17 @@
             }
             
             try {
-                const response = await fetch(CONFIG.apiUrl);
+                // 使用AbortController实现超时控制
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), isMobile ? 8000 : 5000);
+                
+                const response = await fetch(CONFIG.apiUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
                 const data = await response.json();
+                
+                // 缓存数据
+                MobileCache.set('stats', data);
                 
                 updateSystemStats(data.system);
                 updateAIStats(data.ai);
@@ -770,6 +815,21 @@
         function init() {
             updateTime();
             setInterval(updateTime, 1000);
+            
+            // 移动端优先从缓存恢复
+            if (isMobile) {
+                const cached = MobileCache.get('stats');
+                if (cached) {
+                    try {
+                        updateSystemStats(cached.system);
+                        updateAIStats(cached.ai);
+                        updateSessionStats(cached.sessions);
+                        updateSkills(cached.skills);
+                        updateLogs(cached.logs || []);
+                        updateLastUpdate();
+                    } catch (e) {}
+                }
+            }
             
             refresh();
             startAutoRefresh();

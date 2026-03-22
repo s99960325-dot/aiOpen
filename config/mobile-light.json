@@ -1,0 +1,30 @@
+{
+  "name": "mobile-light",
+  "description": "移动端轻量模式配置 - 优先加载速度",
+  "model": {
+    "name": "GLM-5-Turbo",
+    "context_window": 64000,
+    "mobile_optimized": true
+  },
+  "skills": {
+    "enabled": ["context-optimizer", "memory-tiering"],
+    "disabled": ["deep-thinking"],
+    "deep_thinking_mobile": false
+  },
+  "memory": {
+    "load_hot_only": true,
+    "skip_warm_on_mobile": true,
+    "max_history_days": 3,
+    "knowledge_index_limit": 20
+  },
+  "qmd": {
+    "extensions": ["evolution"],
+    "skip_archive_on_mobile": true,
+    "max_results": 5
+  },
+  "loading": {
+    "strategy": "progressive",
+    "first_screen": ["conversation-state.md", "SOUL.md"],
+    "lazy_load": ["knowledge-index.md", "evolution/"]
+  }
+}

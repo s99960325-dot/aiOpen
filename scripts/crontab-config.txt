@@ -1,0 +1,11 @@
+# OpenClaw 移动端优化定时任务
+# 添加到crontab: crontab -e
+
+# 每天凌晨3点自动归档旧记忆（减少移动端加载数据量）
+0 3 * * * /Users/seven/clawd/scripts/archive-old-memories.sh >> /Users/seven/clawd/memory/archive.log 2>&1
+
+# 每小时清理一次临时缓存（保持系统轻量）
+0 * * * * find /Users/seven/clawd/memory -name "*.tmp" -type f -mmin +60 -delete
+
+# 每周日清理归档目录（保留最近30天）
+0 4 * * 0 find /Users/seven/clawd/memory/archive -type f -mtime +30 -delete
