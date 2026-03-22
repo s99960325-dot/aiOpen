@@ -13,9 +13,6 @@
 ## [规则] 先查后答原则
 seven老师要求：回答问题前先查资料（web_search、memory_search、qmd等），查完再给结论，不拍脑袋。这是一条铁律。
 
-## [规则] 操作审批原则
-核心配置修改必须先批准后动手，哪怕小改动也要先请示再执行，不能抢跑越界。2026-03-23教训。
-
 ## [工具] Brave Search API配置
 Brave Search API key已配置到tools.web.search.apiKey，重启后可正常使用web_search工具进行网页搜索。
 
