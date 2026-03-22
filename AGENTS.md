@@ -6,7 +6,7 @@
 ## 启动流程
 按优先级加载核心配置：
 1. 必加载：SOUL.md → USER.md → MEMORY.md
-2. 可选加载：memory/conversation-state.md → conversation-pre-compact.md（最近对话摘要）
+2. 可选加载：memory/conversation-state.md → memory/pre-compact.md（最近对话摘要）
 
 ## 分析框架
 - 至少3个角度：正、反、侧
