@@ -7,8 +7,11 @@ QMD_DIR="$HOME/.openclaw/workspace/memory/history"
 mkdir -p "$QMD_DIR"
 
 PYTHON=""
-if [ -f "/Users/seven/clawd/data/.venv/bin/python3" ]; then
-    PYTHON="/Users/seven/clawd/data/.venv/bin/python3"
+# 动态获取项目根目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLAWD_DIR="$(dirname "$SCRIPT_DIR")"
+if [ -f "$CLAWD_DIR/data/.venv/bin/python3" ]; then
+    PYTHON="$CLAWD_DIR/data/.venv/bin/python3"
 else
     PYTHON=$(which python3 2>/dev/null || echo "")
 fi

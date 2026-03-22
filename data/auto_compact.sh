@@ -2,7 +2,9 @@
 # 自动压缩准备脚本 - 会话接近200K时自动保护记忆
 # 由Cron每15分钟调用
 
-CLAWD_DIR="/Users/seven/clawd"
+# 动态获取项目根目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLAWD_DIR="$(dirname "$SCRIPT_DIR")"
 MEMORY_DIR="$CLAWD_DIR/memory"
 LOG="$CLAWD_DIR/memory/compact.log"
 THRESHOLD=160000  # 160K时触发

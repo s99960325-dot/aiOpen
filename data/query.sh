@@ -3,7 +3,10 @@
 # 用法：./query.sh <关键词> | ./query.sh all
 # 增强：进化/待办/最近对话/分类搜索
 
-DB="/Users/seven/.openclaw/workspace/data/memory.db"
+# 动态获取项目根目录（脚本所在目录的父目录）
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKSPACE="$(dirname "$SCRIPT_DIR")"
+DB="$WORKSPACE/data/memory.db"
 
 if [ -z "$1" ]; then
   echo "用法: $0 <命令> [参数]"

@@ -5,7 +5,9 @@
 
 set -euo pipefail
 
-WORKSPACE="/Users/seven/clawd"
+# 动态获取项目根目录（脚本所在目录的父目录）
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKSPACE="$(dirname "$SCRIPT_DIR")"
 DB="$WORKSPACE/data/memory.db"
 MEMORY_MD="$WORKSPACE/MEMORY.md"
 MEMORY_DIR="$WORKSPACE/memory"
@@ -13,10 +15,12 @@ TODAY=$(date +%Y-%m-%d)
 
 mkdir -p "$MEMORY_DIR"
 
-python3 << 'PYEOF'
+python3 << PYEOF
 import sqlite3, os, datetime
 
-WORKSPACE = "/Users/seven/clawd"
+# 动态获取项目根目录
+SCRIPT_DIR = os.path.dirname(os.path.abspath("${BASH_SOURCE[0]}"))
+WORKSPACE = os.path.dirname(SCRIPT_DIR)
 DB = os.path.join(WORKSPACE, "data/memory.db")
 MEMORY_MD = os.path.join(WORKSPACE, "MEMORY.md")
 MEMORY_DIR = os.path.join(WORKSPACE, "memory")
@@ -26,7 +30,7 @@ db = sqlite3.connect(DB)
 
 # 1. 固定头部
 header = """# MEMORY.md - 狗狗军师长期记忆
-> 自动同步，详情查 `data/query.sh <关键词>`
+> 自动同步，详情查 \`data/query.sh <关键词>\`
 
 ### 身份
 - 狗狗军师，seven老师的私人军师，全领域智囊
@@ -65,7 +69,7 @@ for label, table in stats:
         content += f"- {label}: {count}\n"
     except:
         content += f"- {label}: 0\n"
-content += f"- 详细查询: `data/query.sh <关键词>`\n\n"
+content += f"- 详细查询: \`data/query.sh <关键词>\`\n\n"
 content += f"> 同步: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S %Z')} | 源: data/memory.db\n"
 
 with open(MEMORY_MD, "w") as f:

@@ -398,26 +398,7 @@
         const CONFIG = {
             refreshInterval: 5000,
             maxLogs: 20,
-            skills: [
-                { name: 'context-optimizer', enabled: true },
-                { name: 'deep-thinking', enabled: true },
-                { name: 'kimi-cli', enabled: true },
-                { name: 'memory-tiering', enabled: true },
-                { name: 'safety-executor', enabled: true },
-                { name: 'steipete-slack', enabled: false },
-                { name: 'weather', enabled: true },
-                { name: 'healthcheck', enabled: true },
-                { name: 'peekaboo', enabled: true },
-                { name: 'qmd', enabled: true },
-                { name: '飞书多维表格', enabled: true },
-                { name: '飞书日历', enabled: true },
-                { name: '飞书IM', enabled: true },
-                { name: '飞书文档', enabled: true },
-                { name: '飞书任务', enabled: true },
-                { name: '飞书频道', enabled: true },
-                { name: '飞书问题排查', enabled: true },
-                { name: '飞书规则', enabled: true }
-            ]
+            apiUrl: '/api/stats'
         };
 
         // State
@@ -443,76 +424,8 @@
             document.getElementById('current-date').textContent = now.toLocaleDateString('zh-CN');
         }
 
-        // Mock data generators
-        function generateSystemStats() {
-            return {
-                cpu: Math.floor(Math.random() * 40) + 20, // 20-60%
-                memory: Math.floor(Math.random() * 30) + 40, // 40-70%
-                disk: Math.floor(Math.random() * 20) + 50, // 50-70%
-                load: [
-                    (Math.random() * 2 + 0.5).toFixed(2),
-                    (Math.random() * 2 + 0.5).toFixed(2),
-                    (Math.random() * 2 + 0.5).toFixed(2)
-                ]
-            };
-        }
-
-        function generateAIStats() {
-            return {
-                totalCalls: 15234 + Math.floor(Math.random() * 100),
-                tokenUsage: formatBytes(2847563210 + Math.floor(Math.random() * 1000000)),
-                todayCost: (12.34 + Math.random() * 5).toFixed(2),
-                modelDistribution: [
-                    { name: 'GLM-5', value: 65, color: 'bg-indigo-500' },
-                    { name: 'GPT-4', value: 20, color: 'bg-purple-500' },
-                    { name: 'Claude', value: 10, color: 'bg-pink-500' },
-                    { name: 'Other', value: 5, color: 'bg-slate-500' }
-                ]
-            };
-        }
-
-        function generateSessionStats() {
-            return {
-                active: Math.floor(Math.random() * 5) + 3,
-                todayMessages: 234 + Math.floor(Math.random() * 50),
-                queued: Math.floor(Math.random() * 3),
-                total: 1234 + Math.floor(Math.random() * 10)
-            };
-        }
-
-        function generateLog() {
-            const levels = ['info', 'warn', 'error'];
-            const level = levels[Math.floor(Math.random() * levels.length)];
-            const messages = {
-                info: [
-                    'Memory sync completed successfully',
-                    'QMD index refreshed',
-                    'New session established',
-                    'Message processed',
-                    'Skill loaded: kimi-cli'
-                ],
-                warn: [
-                    'High memory usage detected',
-                    'Slow query detected: 2.3s',
-                    'Token usage approaching limit',
-                    'Connection retry attempt #2'
-                ],
-                error: [
-                    'Failed to connect to Telegram API',
-                    'Database connection timeout',
-                    'Skill load failed: weather',
-                    'Memory sync error: disk full'
-                ]
-            };
-            const message = messages[level][Math.floor(Math.random() * messages[level].length)];
-            const time = new Date().toLocaleTimeString('zh-CN');
-            return { time, level, message };
-        }
-
         // Update functions
-        function updateSystemStats() {
-            const stats = generateSystemStats();
-            
+        function updateSystemStats(stats) {
             document.getElementById('cpu-value').textContent = stats.cpu + '%';
             document.getElementById('cpu-bar').style.width = stats.cpu + '%';
             
@@ -527,11 +440,9 @@
             document.getElementById('load-15').textContent = stats.load[2];
         }
 
-        function updateAIStats() {
-            const stats = generateAIStats();
-            
+        function updateAIStats(stats) {
             document.getElementById('total-calls').textContent = formatNumber(stats.totalCalls);
-            document.getElementById('token-usage').textContent = stats.tokenUsage;
+            document.getElementById('token-usage').textContent = formatBytes(stats.tokenUsage);
             document.getElementById('today-cost').textContent = '¥' + stats.todayCost;
             
             // Update chart
@@ -544,43 +455,32 @@
             `).join('');
         }
 
-        function updateSessionStats() {
-            const stats = generateSessionStats();
-            
+        function updateSessionStats(stats) {
             document.getElementById('active-sessions').textContent = stats.active;
             document.getElementById('today-messages').textContent = stats.todayMessages;
             document.getElementById('queued-tasks').textContent = stats.queued;
             document.getElementById('total-sessions').textContent = formatNumber(stats.total);
         }
 
-        function updateSkills() {
-            const enabled = CONFIG.skills.filter(s => s.enabled).length;
-            const disabled = CONFIG.skills.filter(s => !s.enabled).length;
-            const total = CONFIG.skills.length;
+        function updateSkills(stats) {
+            document.getElementById('skills-total').textContent = stats.total + ' skills';
+            document.getElementById('skills-enabled').textContent = stats.enabled;
+            document.getElementById('skills-disabled').textContent = stats.disabled;
             
-            document.getElementById('skills-total').textContent = total + ' skills';
-            document.getElementById('skills-enabled').textContent = enabled;
-            document.getElementById('skills-disabled').textContent = disabled;
-            
-            document.getElementById('skills-enabled-bar').style.width = (enabled / total * 100) + '%';
-            document.getElementById('skills-disabled-bar').style.width = (disabled / total * 100) + '%';
+            document.getElementById('skills-enabled-bar').style.width = (stats.enabled / stats.total * 100) + '%';
+            document.getElementById('skills-disabled-bar').style.width = (stats.disabled / stats.total * 100) + '%';
             
             // Show recent skills
             const skillsList = document.getElementById('skills-list');
-            skillsList.innerHTML = CONFIG.skills.slice(0, 8).map(skill => `
+            skillsList.innerHTML = stats.list.slice(0, 8).map(skill => `
                 <span class="px-2 py-1 text-xs rounded ${skill.enabled ? 'bg-green-500/20 text-green-400' : 'bg-slate-700 text-slate-500'}">
                     ${skill.name}
                 </span>
             `).join('');
         }
 
-        function addLog() {
-            if (Math.random() > 0.3) return; // Only add log 30% of the time
-            
-            const log = generateLog();
-            logs.unshift(log);
-            if (logs.length > CONFIG.maxLogs) logs.pop();
-            
+        function updateLogs(newLogs) {
+            logs = newLogs;
             const container = document.getElementById('log-container');
             container.innerHTML = logs.map(log => `
                 <div class="log-entry log-${log.level} fade-in">
@@ -591,32 +491,56 @@
             `).join('');
         }
 
-        function updateHeartbeat() {
-            const status = Math.random() > 0.1 ? 'HEARTBEAT_OK' : 'CHECK_WARNINGS';
+        function updateHeartbeat(status) {
             const el = document.getElementById('heartbeat-status');
             el.textContent = status;
             el.className = status === 'HEARTBEAT_OK' ? 'text-sm text-green-400' : 'text-sm text-amber-400';
+        }
+
+        function updateVersion(version) {
+            document.getElementById('version').textContent = version;
         }
 
         function updateLastUpdate() {
             document.getElementById('last-update').textContent = new Date().toLocaleTimeString('zh-CN');
         }
 
-        // Main refresh function
-        function refresh() {
+        // Main refresh function - fetch from API
+        async function refresh() {
             const btn = document.getElementById('refresh-btn');
-            btn.querySelector('i').classList.add('refresh-spin');
+            if (btn && btn.querySelector('i')) {
+                btn.querySelector('i').classList.add('refresh-spin');
+            }
             
-            updateSystemStats();
-            updateAIStats();
-            updateSessionStats();
-            updateSkills();
-            addLog();
-            updateHeartbeat();
-            updateLastUpdate();
+            try {
+                const response = await fetch(CONFIG.apiUrl);
+                const data = await response.json();
+                
+                updateSystemStats(data.system);
+                updateAIStats(data.ai);
+                updateSessionStats(data.sessions);
+                updateSkills(data.skills);
+                updateLogs(data.logs);
+                updateHeartbeat(data.heartbeat);
+                updateVersion(data.version);
+                updateLastUpdate();
+            } catch (e) {
+                console.error('Failed to fetch stats:', e);
+                // Show error in logs
+                const errorLog = {
+                    time: new Date().toLocaleTimeString('zh-CN'),
+                    level: 'error',
+                    message: 'Failed to fetch stats: ' + e.message
+                };
+                logs.unshift(errorLog);
+                if (logs.length > CONFIG.maxLogs) logs.pop();
+                updateLogs(logs);
+            }
             
             setTimeout(() => {
-                btn.querySelector('i').classList.remove('refresh-spin');
+                if (btn && btn.querySelector('i')) {
+                    btn.querySelector('i').classList.remove('refresh-spin');
+                }
             }, 500);
         }
 
@@ -648,13 +572,6 @@
         function init() {
             updateTime();
             setInterval(updateTime, 1000);
-            
-            // Add initial logs
-            for (let i = 0; i < 5; i++) {
-                const log = generateLog();
-                log.time = new Date(Date.now() - i * 60000).toLocaleTimeString('zh-CN');
-                logs.push(log);
-            }
             
             refresh();
             startAutoRefresh();
