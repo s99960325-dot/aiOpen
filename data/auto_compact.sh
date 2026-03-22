@@ -51,9 +51,9 @@ get_tokens_from_kimi_logs() {
 # 主逻辑：获取当前会话token数
 input_tokens=0
 
-# 方法1：尝试使用 openclaw-cn 命令（如果存在）
-if command -v openclaw-cn &>/dev/null; then
-    token_info=$(openclaw-cn sessions --json --active 30 2>/dev/null)
+# 方法1：尝试使用 openclaw 命令（国际版）
+if command -v openclaw &>/dev/null; then
+    token_info=$(openclaw sessions --json --active 30 2>/dev/null)
     if [ -n "$token_info" ]; then
         input_tokens=$(echo "$token_info" | python3 -c "
 import json, sys
@@ -69,7 +69,7 @@ try:
 except:
     print(0)
 " 2>/dev/null)
-        echo "$(date '+%Y-%m-%d %H:%M:%S') - 通过 openclaw-cn 获取token: $input_tokens" >> "$LOG"
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - 通过 openclaw 获取token: $input_tokens" >> "$LOG"
     fi
 fi
 
