@@ -15,7 +15,6 @@ Skills define *how* tools work. This file is for *your* specifics.
 
 ## 服务器
 - 阿里云：47.237.85.150（朋友/团队机器人）
-- SSH: root / Mm369369@163
 - 系统: Linux，OpenClaw 2026.3.13
 
 ## 通道
@@ -28,9 +27,15 @@ Skills define *how* tools work. This file is for *your* specifics.
 
 ## 工具链
 - 浏览器自动化（调研/截图）
-- GitHub（知识库/代码管理）
+- GitHub（知识库/代码管理 + 监控大屏托管）
 - Cron定时任务（日报/同步/备份）
 - Claude Code（备用编程）
+
+## 监控大屏
+- 本地文件：/Users/seven/clawd/monitor.html
+- GitHub Pages 托管：https://[username].github.io/[repo]/monitor.html
+- 自动刷新：5秒一次，支持手动刷新/开关
+- 深色主题，响应式适配
 
 ## 待配置
 - 中转API key（seven老师购买后配置）

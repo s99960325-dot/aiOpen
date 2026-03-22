@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw 监控大屏</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15);
+        }
+        
+        .metric-value {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-online { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+        .status-warning { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+        .status-offline { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        
+        .log-entry {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .log-error { color: #f87171; }
+        .log-warn { color: #fbbf24; }
+        .log-info { color: #60a5fa; }
+        
+        .refresh-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .chart-bar {
+            transition: all 0.3s ease;
+        }
+        
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+        
+        .heartbeat-line {
+            stroke-dasharray: 4;
+            animation: dash 1s linear infinite;
+        }
+        
+        @keyframes dash {
+            to { stroke-dashoffset: -8; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4">
+    <!-- Header -->
+    <header class="glass rounded-xl p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <i class="fas fa-claw text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-white">OpenClaw 监控大屏</h1>
+                <p class="text-xs text-slate-400">🐕 狗狗军师 · AI私人智囊系统</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2 text-sm">
+                <span class="status-dot status-online"></span>
+                <span class="text-slate-300">系统正常</span>
+            </div>
+            <div class="text-right">
+                <div id="current-time" class="text-lg font-mono font-semibold text-white">--:--:--</div>
+                <div id="current-date" class="text-xs text-slate-400">----/--/--</div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="refresh-btn" class="px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm transition-colors">
+                    <i class="fas fa-sync-alt mr-1"></i> 刷新
+                </button>
+                <label class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-700 cursor-pointer hover:bg-slate-600 transition-colors">
+                    <input type="checkbox" id="auto-refresh" checked class="w-4 h-4 accent-indigo-500">
+                    <span class="text-sm text-slate-200">自动刷新</span>
+                </label>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <!-- System Resources -->
+        <div class="card p-4 lg:col-span-2">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                    <i class="fas fa-server text-indigo-400"></i> 系统资源监控
+                </h2>
+                <span class="text-xs text-slate-500 font-mono">47.237.85.150</span>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-400">CPU 使用率</span>
+                        <span id="cpu-value" class="font-mono text-indigo-300">--%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="cpu-bar" class="progress-fill bg-gradient-to-r from-blue-500 to-indigo-500" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-400">内存占用</span>
+                        <span id="mem-value" class="font-mono text-purple-300">--%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="mem-bar" class="progress-fill bg-gradient-to-r from-purple-500 to-pink-500" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-400">磁盘空间</span>
+                        <span id="disk-value" class="font-mono text-cyan-300">--%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="disk-bar" class="progress-fill bg-gradient-to-r from-cyan-500 to-teal-500" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2 pt-2">
+                    <div class="text-center p-2 rounded-lg bg-slate-800/50">
+                        <div id="load-1" class="text-lg font-mono font-semibold text-white">--</div>
+                        <div class="text-xs text-slate-500">1分钟负载</div>
+                    </div>
+                    <div class="text-center p-2 rounded-lg bg-slate-800/50">
+                        <div id="load-5" class="text-lg font-mono font-semibold text-white">--</div>
+                        <div class="text-xs text-slate-500">5分钟负载</div>
+                    </div>
+                    <div class="text-center p-2 rounded-lg bg-slate-800/50">
+                        <div id="load-15" class="text-lg font-mono font-semibold text-white">--</div>
+                        <div class="text-xs text-slate-500">15分钟负载</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Model Stats -->
+        <div class="card p-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                    <i class="fas fa-brain text-pink-400"></i> AI模型统计
+                </h2>
+                <span class="text-xs text-slate-500">GLM-5-Turbo</span>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-2 rounded-lg bg-slate-800/50">
+                    <span class="text-xs text-slate-400">总调用次数</span>
+                    <span id="total-calls" class="font-mono font-semibold text-white">--</span>
+                </div>
+                <div class="flex justify-between items-center p-2 rounded-lg bg-slate-800/50">
+                    <span class="text-xs text-slate-400">Token消耗</span>
+                    <span id="token-usage" class="font-mono font-semibold text-pink-300">--</span>
+                </div>
+                <div class="flex justify-between items-center p-2 rounded-lg bg-slate-800/50">
+                    <span class="text-xs text-slate-400">今日成本</span>
+                    <span id="today-cost" class="font-mono font-semibold text-green-400">¥--</span>
+                </div>
+                <div class="pt-2">
+                    <div class="text-xs text-slate-500 mb-2">模型调用占比</div>
+                    <div id="model-chart" class="h-16 flex items-end gap-1">
+                        <!-- Dynamic bars -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Session Stats -->
+        <div class="card p-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                    <i class="fas fa-comments text-cyan-400"></i> 会话统计
+                </h2>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="text-center p-3 rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30">
+                    <div id="active-sessions" class="text-2xl font-bold metric-value">--</div>
+                    <div class="text-xs text-slate-400 mt-1">活跃会话</div>
+                </div>
+                <div class="text-center p-3 rounded-lg bg-slate-800/50">
+                    <div id="today-messages" class="text-2xl font-bold text-white">--</div>
+                    <div class="text-xs text-slate-400 mt-1">今日消息</div>
+                </div>
+                <div class="text-center p-3 rounded-lg bg-slate-800/50">
+                    <div id="queued-tasks" class="text-2xl font-bold text-amber-400">--</div>
+                    <div class="text-xs text-slate-400 mt-1">排队任务</div>
+                </div>
+                <div class="text-center p-3 rounded-lg bg-slate-800/50">
+                    <div id="total-sessions" class="text-2xl font-bold text-white">--</div>
+                    <div class="text-xs text-slate-400 mt-1">总会话</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        <!-- Channel Status -->
+        <div class="card p-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                    <i class="fas fa-plug text-green-400"></i> 通道状态
+                </h2>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                            <i class="fab fa-telegram text-blue-400"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-white">Telegram</div>
+                            <div class="text-xs text-slate-500">主力通道</div>
+                        </div>
+                    </div>
+                    <span class="status-dot status-online"></span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+                            <i class="fas fa-laptop-code text-green-400"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-white">飞书</div>
+                            <div class="text-xs text-slate-500">工作用</div>
+                        </div>
+                    </div>
+                    <span class="status-dot status-online"></span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                            <i class="fab fa-slack text-purple-400"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-white">Slack</div>
+                            <div class="text-xs text-slate-500">备用</div>
+                        </div>
+                    </div>
+                    <span id="slack-status" class="status-dot status-offline"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Management -->
+        <div class="card p-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                    <i class="fas fa-puzzle-piece text-amber-400"></i> 技能管理
+                </h2>
+                <span id="skills-total" class="text-xs px-2 py-1 rounded-full bg-amber-500/20 text-amber-300">--</span>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-slate-400">已启用</span>
+                    <div class="flex items-center gap-2">
+                        <div class="w-24 progress-bar">
+                            <div id="skills-enabled-bar" class="progress-fill bg-green-500" style="width: 0%"></div>
+                        </div>
+                        <span id="skills-enabled" class="text-sm font-mono text-green-400">--</span>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-slate-400">已禁用</span>
+                    <div class="flex items-center gap-2">
+                        <div class="w-24 progress-bar">
+                            <div id="skills-disabled-bar" class="progress-fill bg-slate-500" style="width: 0%"></div>
+                        </div>
+                        <span id="skills-disabled" class="text-sm font-mono text-slate-400">--</span>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-slate-700/50">
+                    <div class="text-xs text-slate-500 mb-2">最近加载</div>
+                    <div id="skills-list" class="flex flex-wrap gap-1">
+                        <!-- Dynamic skill tags -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Logs -->
+        <div class="card p-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                    <i class="fas fa-terminal text-red-400"></i> 实时日志
+                </h2>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                    <span class="text-xs text-slate-500">LIVE</span>
+                </div>
+            </div>
+            <div id="log-container" class="h-40 overflow-y-auto text-xs space-y-1 pr-2 scrollbar-thin">
+                <!-- Dynamic logs -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="glass rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-code-branch text-slate-500"></i>
+                <span class="text-sm text-slate-400">OpenClaw <span id="version" class="font-mono text-slate-300">2026.3.13</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path class="heartbeat-line text-green-500" d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                <span id="heartbeat-status" class="text-sm text-green-400">HEARTBEAT_OK</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 text-xs text-slate-500">
+            <span>最后更新: <span id="last-update" class="font-mono">--</span></span>
+            <span>刷新间隔: <span class="font-mono">5s</span></span>
+        </div>
+    </footer>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            refreshInterval: 5000,
+            maxLogs: 20,
+            skills: [
+                { name: 'context-optimizer', enabled: true },
+                { name: 'deep-thinking', enabled: true },
+                { name: 'kimi-cli', enabled: true },
+                { name: 'memory-tiering', enabled: true },
+                { name: 'safety-executor', enabled: true },
+                { name: 'steipete-slack', enabled: false },
+                { name: 'weather', enabled: true },
+                { name: 'healthcheck', enabled: true },
+                { name: 'peekaboo', enabled: true },
+                { name: 'qmd', enabled: true },
+                { name: '飞书多维表格', enabled: true },
+                { name: '飞书日历', enabled: true },
+                { name: '飞书IM', enabled: true },
+                { name: '飞书文档', enabled: true },
+                { name: '飞书任务', enabled: true },
+                { name: '飞书频道', enabled: true },
+                { name: '飞书问题排查', enabled: true },
+                { name: '飞书规则', enabled: true }
+            ]
+        };
+
+        // State
+        let autoRefreshEnabled = true;
+        let refreshTimer = null;
+        let logs = [];
+
+        // Utility functions
+        function formatNumber(num) {
+            return num.toLocaleString('zh-CN');
+        }
+
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+            return (bytes / 1024 / 1024 / 1024).toFixed(1) + ' GB';
+        }
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('zh-CN');
+            document.getElementById('current-date').textContent = now.toLocaleDateString('zh-CN');
+        }
+
+        // Mock data generators
+        function generateSystemStats() {
+            return {
+                cpu: Math.floor(Math.random() * 40) + 20, // 20-60%
+                memory: Math.floor(Math.random() * 30) + 40, // 40-70%
+                disk: Math.floor(Math.random() * 20) + 50, // 50-70%
+                load: [
+                    (Math.random() * 2 + 0.5).toFixed(2),
+                    (Math.random() * 2 + 0.5).toFixed(2),
+                    (Math.random() * 2 + 0.5).toFixed(2)
+                ]
+            };
+        }
+
+        function generateAIStats() {
+            return {
+                totalCalls: 15234 + Math.floor(Math.random() * 100),
+                tokenUsage: formatBytes(2847563210 + Math.floor(Math.random() * 1000000)),
+                todayCost: (12.34 + Math.random() * 5).toFixed(2),
+                modelDistribution: [
+                    { name: 'GLM-5', value: 65, color: 'bg-indigo-500' },
+                    { name: 'GPT-4', value: 20, color: 'bg-purple-500' },
+                    { name: 'Claude', value: 10, color: 'bg-pink-500' },
+                    { name: 'Other', value: 5, color: 'bg-slate-500' }
+                ]
+            };
+        }
+
+        function generateSessionStats() {
+            return {
+                active: Math.floor(Math.random() * 5) + 3,
+                todayMessages: 234 + Math.floor(Math.random() * 50),
+                queued: Math.floor(Math.random() * 3),
+                total: 1234 + Math.floor(Math.random() * 10)
+            };
+        }
+
+        function generateLog() {
+            const levels = ['info', 'warn', 'error'];
+            const level = levels[Math.floor(Math.random() * levels.length)];
+            const messages = {
+                info: [
+                    'Memory sync completed successfully',
+                    'QMD index refreshed',
+                    'New session established',
+                    'Message processed',
+                    'Skill loaded: kimi-cli'
+                ],
+                warn: [
+                    'High memory usage detected',
+                    'Slow query detected: 2.3s',
+                    'Token usage approaching limit',
+                    'Connection retry attempt #2'
+                ],
+                error: [
+                    'Failed to connect to Telegram API',
+                    'Database connection timeout',
+                    'Skill load failed: weather',
+                    'Memory sync error: disk full'
+                ]
+            };
+            const message = messages[level][Math.floor(Math.random() * messages[level].length)];
+            const time = new Date().toLocaleTimeString('zh-CN');
+            return { time, level, message };
+        }
+
+        // Update functions
+        function updateSystemStats() {
+            const stats = generateSystemStats();
+            
+            document.getElementById('cpu-value').textContent = stats.cpu + '%';
+            document.getElementById('cpu-bar').style.width = stats.cpu + '%';
+            
+            document.getElementById('mem-value').textContent = stats.memory + '%';
+            document.getElementById('mem-bar').style.width = stats.memory + '%';
+            
+            document.getElementById('disk-value').textContent = stats.disk + '%';
+            document.getElementById('disk-bar').style.width = stats.disk + '%';
+            
+            document.getElementById('load-1').textContent = stats.load[0];
+            document.getElementById('load-5').textContent = stats.load[1];
+            document.getElementById('load-15').textContent = stats.load[2];
+        }
+
+        function updateAIStats() {
+            const stats = generateAIStats();
+            
+            document.getElementById('total-calls').textContent = formatNumber(stats.totalCalls);
+            document.getElementById('token-usage').textContent = stats.tokenUsage;
+            document.getElementById('today-cost').textContent = '¥' + stats.todayCost;
+            
+            // Update chart
+            const chartContainer = document.getElementById('model-chart');
+            chartContainer.innerHTML = stats.modelDistribution.map(model => `
+                <div class="flex-1 flex flex-col items-center gap-1">
+                    <div class="w-full ${model.color} rounded-t chart-bar" style="height: ${model.value}%"></div>
+                    <span class="text-xs text-slate-500">${model.name}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateSessionStats() {
+            const stats = generateSessionStats();
+            
+            document.getElementById('active-sessions').textContent = stats.active;
+            document.getElementById('today-messages').textContent = stats.todayMessages;
+            document.getElementById('queued-tasks').textContent = stats.queued;
+            document.getElementById('total-sessions').textContent = formatNumber(stats.total);
+        }
+
+        function updateSkills() {
+            const enabled = CONFIG.skills.filter(s => s.enabled).length;
+            const disabled = CONFIG.skills.filter(s => !s.enabled).length;
+            const total = CONFIG.skills.length;
+            
+            document.getElementById('skills-total').textContent = total + ' skills';
+            document.getElementById('skills-enabled').textContent = enabled;
+            document.getElementById('skills-disabled').textContent = disabled;
+            
+            document.getElementById('skills-enabled-bar').style.width = (enabled / total * 100) + '%';
+            document.getElementById('skills-disabled-bar').style.width = (disabled / total * 100) + '%';
+            
+            // Show recent skills
+            const skillsList = document.getElementById('skills-list');
+            skillsList.innerHTML = CONFIG.skills.slice(0, 8).map(skill => `
+                <span class="px-2 py-1 text-xs rounded ${skill.enabled ? 'bg-green-500/20 text-green-400' : 'bg-slate-700 text-slate-500'}">
+                    ${skill.name}
+                </span>
+            `).join('');
+        }
+
+        function addLog() {
+            if (Math.random() > 0.3) return; // Only add log 30% of the time
+            
+            const log = generateLog();
+            logs.unshift(log);
+            if (logs.length > CONFIG.maxLogs) logs.pop();
+            
+            const container = document.getElementById('log-container');
+            container.innerHTML = logs.map(log => `
+                <div class="log-entry log-${log.level} fade-in">
+                    <span class="text-slate-600">[${log.time}]</span>
+                    <span class="uppercase font-semibold text-xs">${log.level}</span>
+                    ${log.message}
+                </div>
+            `).join('');
+        }
+
+        function updateHeartbeat() {
+            const status = Math.random() > 0.1 ? 'HEARTBEAT_OK' : 'CHECK_WARNINGS';
+            const el = document.getElementById('heartbeat-status');
+            el.textContent = status;
+            el.className = status === 'HEARTBEAT_OK' ? 'text-sm text-green-400' : 'text-sm text-amber-400';
+        }
+
+        function updateLastUpdate() {
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString('zh-CN');
+        }
+
+        // Main refresh function
+        function refresh() {
+            const btn = document.getElementById('refresh-btn');
+            btn.querySelector('i').classList.add('refresh-spin');
+            
+            updateSystemStats();
+            updateAIStats();
+            updateSessionStats();
+            updateSkills();
+            addLog();
+            updateHeartbeat();
+            updateLastUpdate();
+            
+            setTimeout(() => {
+                btn.querySelector('i').classList.remove('refresh-spin');
+            }, 500);
+        }
+
+        // Event listeners
+        document.getElementById('refresh-btn').addEventListener('click', refresh);
+        
+        document.getElementById('auto-refresh').addEventListener('change', (e) => {
+            autoRefreshEnabled = e.target.checked;
+            if (autoRefreshEnabled) {
+                startAutoRefresh();
+            } else {
+                stopAutoRefresh();
+            }
+        });
+
+        function startAutoRefresh() {
+            if (refreshTimer) clearInterval(refreshTimer);
+            refreshTimer = setInterval(refresh, CONFIG.refreshInterval);
+        }
+
+        function stopAutoRefresh() {
+            if (refreshTimer) {
+                clearInterval(refreshTimer);
+                refreshTimer = null;
+            }
+        }
+
+        // Initialize
+        function init() {
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Add initial logs
+            for (let i = 0; i < 5; i++) {
+                const log = generateLog();
+                log.time = new Date(Date.now() - i * 60000).toLocaleTimeString('zh-CN');
+                logs.push(log);
+            }
+            
+            refresh();
+            startAutoRefresh();
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
