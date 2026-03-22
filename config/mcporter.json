@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "kimi-cli-bridge": {
+      "command": "kimi",
+      "args": []
+    }
+  }
+}
