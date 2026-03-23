@@ -4,3 +4,4 @@
 *.bak.*
 *.log
 *.md.header
+data/chat_memory.db
