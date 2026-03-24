@@ -80,6 +80,7 @@ Temperament:
 ## Training references
 Read these when sharpening a persona:
 - `references/persona-briefs.md`
+- `references/templates/output-templates.md`
 - `references/training/zongjunshi.md`
 - `references/training/xuance.md`
 - `references/training/poju.md`
